@@ -1,0 +1,16 @@
+<%
+  // locals.* so this still renders on error pages, where the flash middleware may not have run
+  const messages = [
+    ...(locals.success || []).map((text) => ({ type: 'flashSuccess', text })),
+    ...(locals.info || []).map((text) => ({ type: 'flashInfo', text })),
+    ...(locals.error || []).map((text) => ({ type: 'flashError', text })),
+    ...(locals.errors || []).map((item) => ({ type: 'flashError', text: item.msg })),
+  ];
+%>
+<% if (messages.length > 0) { %>
+  <ul class="flashList" role="status">
+    <% messages.forEach((message) => { %>
+      <li class="flash <%= message.type %>"><%= message.text %></li>
+    <% }) %>
+  </ul>
+<% } %>

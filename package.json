@@ -1,0 +1,12 @@
+{
+  "name": "mvc-scaffold",
+  "version": "1.0.0",
+  "description": "Scaffold an Express 5 + MongoDB + EJS + Passport app that follows Bobby's code standards",
+  "private": true,
+  "type": "commonjs",
+  "bin": {
+    "mvc-scaffold": "bin/mvcScaffold.js"
+  },
+  "author": "Bobby",
+  "license": "ISC"
+}

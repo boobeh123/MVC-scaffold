@@ -1,0 +1,11 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<main class="pageMain">
+  <%- include('partials/flash') %>
+  <section class="dashboardSection">
+    <h1>Dashboard</h1>
+    <p>You're logged in as <strong><%= user.email %></strong>.</p>
+    <p>This page is protected by <code>ensureAuth</code>. Build your app from here.</p>
+  </section>
+</main>
+<%- include('partials/footer') %>

@@ -1,0 +1,23 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<main class="pageMain">
+  <section class="authSection">
+    <h1>Sign up</h1>
+    <%- include('partials/flash') %>
+    <form class="authForm" action="/signup" method="POST">
+      <label class="formLabel" for="email">Email</label>
+      <input class="formInput" id="email" name="email" type="email" autocomplete="email" required>
+
+      <label class="formLabel" for="password">Password</label>
+      <input class="formInput" id="password" name="password" type="password" autocomplete="new-password" minlength="8" maxlength="72" aria-describedby="passwordHint" required>
+      <p class="formHint" id="passwordHint">8 to 72 characters.</p>
+
+      <label class="formLabel" for="confirmPassword">Confirm password</label>
+      <input class="formInput" id="confirmPassword" name="confirmPassword" type="password" autocomplete="new-password" required>
+
+      <button class="button" type="submit">Create account</button>
+    </form>
+    <p class="authSwitch">Already have an account? <a href="/login">Log in</a></p>
+  </section>
+</main>
+<%- include('partials/footer') %>

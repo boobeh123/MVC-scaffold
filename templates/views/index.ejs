@@ -1,0 +1,15 @@
+<%- include('partials/head') %>
+<%- include('partials/header') %>
+<main class="pageMain">
+  <%- include('partials/flash') %>
+  <section class="heroSection">
+    <h1 class="heroTitle">{{appTitle}}</h1>
+    <p class="heroText">Your new Express app is up and running.</p>
+    <% if (locals.user) { %>
+      <a class="button" href="/dashboard">Go to your dashboard</a>
+    <% } else { %>
+      <a class="button" href="/signup">Create an account</a>
+    <% } %>
+  </section>
+</main>
+<%- include('partials/footer') %>

@@ -1,0 +1,18 @@
+<header class="siteHeader">
+  <nav class="siteNav" aria-label="Main">
+    <a class="navBrand" href="/">{{appTitle}}</a>
+    <ul class="navList">
+      <% if (locals.user) { %>
+        <li><a class="navLink" href="/dashboard">Dashboard</a></li>
+        <li>
+          <form class="navForm" action="/logout" method="POST">
+            <button class="navLink navButton" type="submit">Log out</button>
+          </form>
+        </li>
+      <% } else { %>
+        <li><a class="navLink" href="/login">Log in</a></li>
+        <li><a class="button" href="/signup">Sign up</a></li>
+      <% } %>
+    </ul>
+  </nav>
+</header>

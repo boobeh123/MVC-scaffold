@@ -1,0 +1,300 @@
+/**************************************************************
+Base
+***************************************************************/
+:root {
+  --colorPrimary: #1d4ed8;
+  --colorPrimaryDark: #1e40af;
+  --colorText: #1f2937;
+  --colorTextMuted: #4b5563;
+  --colorBg: #f9fafb;
+  --colorSurface: #ffffff;
+  --colorBorder: #d1d5db;
+  --colorSuccessBg: #dcfce7;
+  --colorSuccessText: #14532d;
+  --colorInfoBg: #dbeafe;
+  --colorInfoText: #1e3a8a;
+  --colorErrorBg: #fee2e2;
+  --colorErrorText: #7f1d1d;
+
+  --fontBody: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+
+  --spaceXs: 0.25rem;
+  --spaceSm: 0.5rem;
+  --spaceMd: 1rem;
+  --spaceLg: 1.5rem;
+  --spaceXl: 3rem;
+
+  --radius: 8px;
+  --contentWidth: 1000px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--colorBg);
+  color: var(--colorText);
+  font-family: var(--fontBody);
+  line-height: 1.6;
+}
+
+a {
+  color: var(--colorPrimary);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible {
+  outline: 3px solid var(--colorPrimary);
+  outline-offset: 2px;
+}
+
+/**************************************************************
+Utilities
+***************************************************************/
+.visuallyHidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.textCenter {
+  text-align: center;
+}
+
+/**************************************************************
+Components
+***************************************************************/
+.button {
+  display: inline-block;
+  padding: var(--spaceSm) var(--spaceLg);
+  border: none;
+  border-radius: var(--radius);
+  background: var(--colorPrimary);
+  color: #ffffff;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--colorPrimaryDark);
+}
+
+.button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.formLabel {
+  display: block;
+  margin-top: var(--spaceMd);
+  font-weight: 600;
+}
+
+.formInput {
+  width: 100%;
+  margin-top: var(--spaceXs);
+  padding: var(--spaceSm);
+  border: 1px solid var(--colorBorder);
+  border-radius: var(--radius);
+  font: inherit;
+}
+
+.formHint {
+  margin: var(--spaceXs) 0 0;
+  color: var(--colorTextMuted);
+  font-size: 0.875rem;
+}
+
+.flashList {
+  margin: 0 0 var(--spaceLg);
+  padding: 0;
+  list-style: none;
+}
+
+.flash {
+  margin-bottom: var(--spaceSm);
+  padding: var(--spaceSm) var(--spaceMd);
+  border-radius: var(--radius);
+}
+
+.flashSuccess {
+  background: var(--colorSuccessBg);
+  color: var(--colorSuccessText);
+}
+
+.flashInfo {
+  background: var(--colorInfoBg);
+  color: var(--colorInfoText);
+}
+
+.flashError {
+  background: var(--colorErrorBg);
+  color: var(--colorErrorText);
+}
+
+/**************************************************************
+Header
+***************************************************************/
+.siteHeader {
+  background: var(--colorSurface);
+  border-bottom: 1px solid var(--colorBorder);
+}
+
+/**************************************************************
+Nav
+***************************************************************/
+.siteNav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spaceMd);
+  max-width: var(--contentWidth);
+  margin: 0 auto;
+  padding: var(--spaceMd);
+}
+
+.navBrand {
+  color: var(--colorText);
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.navList {
+  display: flex;
+  align-items: center;
+  gap: var(--spaceMd);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.navLink {
+  color: var(--colorText);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.navLink:hover {
+  color: var(--colorPrimary);
+}
+
+.navForm {
+  margin: 0;
+}
+
+.navButton {
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+/**************************************************************
+Main
+***************************************************************/
+.pageMain {
+  flex: 1;
+  width: 100%;
+  max-width: var(--contentWidth);
+  margin: 0 auto;
+  padding: var(--spaceXl) var(--spaceMd);
+}
+
+/**************************************************************
+Hero
+***************************************************************/
+.heroSection {
+  padding: var(--spaceXl) 0;
+  text-align: center;
+}
+
+.heroTitle {
+  margin: 0 0 var(--spaceSm);
+  font-size: clamp(2rem, 6vw, 3rem);
+}
+
+.heroText {
+  margin: 0 0 var(--spaceLg);
+  color: var(--colorTextMuted);
+  font-size: 1.125rem;
+}
+
+/**************************************************************
+Auth forms
+***************************************************************/
+.authSection {
+  max-width: 400px;
+  margin: 0 auto;
+  padding: var(--spaceLg);
+  background: var(--colorSurface);
+  border: 1px solid var(--colorBorder);
+  border-radius: var(--radius);
+}
+
+.authSection h1 {
+  margin-top: 0;
+}
+
+.authForm .button {
+  width: 100%;
+  margin-top: var(--spaceLg);
+}
+
+.authSwitch {
+  margin-bottom: 0;
+  color: var(--colorTextMuted);
+  text-align: center;
+}
+
+/**************************************************************
+Dashboard
+***************************************************************/
+.dashboardSection h1 {
+  margin-top: 0;
+}
+
+/**************************************************************
+Error page
+***************************************************************/
+.errorSection {
+  text-align: center;
+}
+
+/**************************************************************
+Footer
+***************************************************************/
+.siteFooter {
+  padding: var(--spaceLg) var(--spaceMd);
+  color: var(--colorTextMuted);
+  font-size: 0.875rem;
+  text-align: center;
+}
+
+/**************************************************************
+Media queries
+***************************************************************/
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
