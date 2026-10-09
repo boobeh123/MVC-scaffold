@@ -30,9 +30,26 @@ my-app/
 
 Working out of the box: sign up, log in, log out, a protected `/dashboard`, flash messages, and a rate limit of 20 auth attempts per 15 minutes.
 
-## How it was tested
+## Testing
 
-Generated an app, ran it against a real MongoDB 8.2, and checked with curl: validation errors, signup → auto login, protected route redirect, logout, duplicate email, wrong password and unknown email giving the same message, email trimmed and lowercased, NoSQL-injection JSON body rejected, bcrypt `$2b$12$` hashes stored, rate limiter returning 429 on attempt 21, 404 page, no session cookie or database row for anonymous visitors.
+```bash
+npm install   # once, for the test's throwaway MongoDB
+npm test
+```
+
+`test/smokeTest.js` scaffolds a real app into a temp folder, installs it, starts it against a throwaway MongoDB 8.2 (`mongodb-memory-server`), and checks over HTTP:
+
+- the expected files exist, `.env` has a random 96-character secret and owner-only permissions
+- anonymous visitors get no session cookie; security headers are set
+- `/dashboard` redirects guests to login with a message
+- invalid signup shows each validation message; a valid signup logs you straight in
+- logged-in users skip the login page; logout works
+- duplicate email is refused; wrong password and unknown email get the same message
+- a NoSQL-injection JSON body is rejected with plain messages
+- email is trimmed and lowercased; 404 page renders
+- the 21st auth attempt gets a 429 "Too many attempts" page
+
+Run it after changing a template or bumping a major version in `DEPENDENCIES`. It takes about 15 seconds once npm's cache is warm. On a Raspberry Pi (Debian on ARM) it automatically uses MongoDB's Ubuntu 24.04 build, since there's no Debian ARM build.
 
 ## Notes
 

@@ -7,6 +7,12 @@
   "bin": {
     "mvc-scaffold": "bin/mvcScaffold.js"
   },
+  "scripts": {
+    "test": "node --test test/smokeTest.js"
+  },
   "author": "Bobby",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "mongodb-memory-server": "^11.3.0"
+  }
 }
