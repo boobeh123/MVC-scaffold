@@ -42,7 +42,7 @@ npm test
 - the expected files exist, `.env` has a random 96-character secret and owner-only permissions
 - anonymous visitors get no session cookie; security headers are set
 - `/dashboard` redirects guests to login with a message
-- invalid signup shows each validation message; a valid signup logs you straight in
+- invalid signup shows each validation message, and nothing that was typed is saved in the session store; a valid signup logs you straight in
 - logged-in users skip the login page; logout works
 - duplicate email is refused; wrong password and unknown email get the same message
 - a NoSQL-injection JSON body is rejected with plain messages
@@ -56,4 +56,5 @@ Run it after changing a template or bumping a major version in `DEPENDENCIES`. I
 - Dependencies install at the major versions the template was tested with (see `DEPENDENCIES` in `bin/mvcScaffold.js`). Bump them there after testing a new major.
 - connect-flash (last released 2013) prints a `util.isArray` deprecation warning on Node 24. It works, but a future Node release could break it.
 - The flash middleware in `server.js` only reads `req.flash()` when the session already has messages. Reading it otherwise writes an empty object to the session, which gives every anonymous visitor a session cookie and a MongoDB document.
+- Validation errors are flashed as messages only (`errors.array().map(({ msg }) => ({ msg }))`). Each express-validator error also holds the value that was typed, and flash messages wait in the session, which connect-mongo saves in MongoDB. Flashing whole errors would store a rejected password there in plain text.
 - No Cloudinary or Multer yet; add them per project when it needs uploads.

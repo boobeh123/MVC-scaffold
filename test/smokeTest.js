@@ -43,6 +43,7 @@ describe('scaffolded app', () => {
   let mongo;
   let app;
   let baseUrl;
+  let dbConnection; // a direct connection, to check what the app stores
   let cookie = ''; // a one-cookie jar is all the app needs (connect.sid)
   let authAttempts = 0; // POSTs to /login and /signup count toward the rate limit
 
@@ -89,6 +90,10 @@ describe('scaffolded app', () => {
       stdio: 'ignore',
     });
 
+    // The generated app's own mongoose, so the test needs no extra dependency
+    const mongoose = require(path.join(tempDir, APP_NAME, 'node_modules', 'mongoose'));
+    dbConnection = await mongoose.createConnection(mongo.getUri(APP_NAME)).asPromise();
+
     for (let tries = 0; tries < 100; tries += 1) {
       try {
         await fetch(baseUrl);
@@ -101,6 +106,7 @@ describe('scaffolded app', () => {
   });
 
   after(async () => {
+    await dbConnection?.close();
     app?.kill();
     await mongo?.stop();
     if (tempDir) fs.rmSync(tempDir, { recursive: true, force: true });
@@ -140,12 +146,16 @@ describe('scaffolded app', () => {
     assert.deepEqual(await getFlashes('/login'), ['flashInfo: Log in to see that page.']);
   });
 
-  it('rejects an invalid signup with clear messages', async () => {
-    const { location } = await request('/signup', {
-      method: 'POST',
-      form: { email: 'nope', password: 'short', confirmPassword: 'other' },
-    });
+  it('rejects an invalid signup with clear messages, without storing what was typed', async () => {
+    const typed = { email: 'not-an-email', password: 'tiny-pw', confirmPassword: 'other-pw' };
+    const { location } = await request('/signup', { method: 'POST', form: typed });
     assert.equal(location, '/signup');
+
+    // Flash messages wait in the session, and connect-mongo saves sessions in MongoDB
+    const stored = JSON.stringify(await dbConnection.db.collection('sessions').find().toArray());
+    const leaked = Object.values(typed).filter((value) => stored.includes(value));
+    assert.deepEqual(leaked, [], 'the session store holds what was typed');
+
     assert.deepEqual(await getFlashes('/signup'), [
       'flashError: Enter a valid email address.',
       'flashError: Use 8 to 72 characters for your password.',

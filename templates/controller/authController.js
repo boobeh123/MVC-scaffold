@@ -19,7 +19,9 @@ exports.getLogin = async (req, res) => {
 exports.postLogin = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    req.flash('errors', errors.array());
+    // Flash only the messages. Each error also holds what was typed, and flash messages wait in
+    // the session, which is saved in MongoDB, so a rejected password would be stored in plain text.
+    req.flash('errors', errors.array().map(({ msg }) => ({ msg })));
     return res.redirect('/login');
   }
 
@@ -38,7 +40,7 @@ exports.getSignup = async (req, res) => {
 exports.postSignup = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    req.flash('errors', errors.array());
+    req.flash('errors', errors.array().map(({ msg }) => ({ msg }))); // messages only, as in postLogin
     return res.redirect('/signup');
   }
 
