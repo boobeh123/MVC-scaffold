@@ -28,7 +28,7 @@ my-app/
 └── .gitignore
 ```
 
-Working out of the box: sign up, log in, log out, a protected `/dashboard`, flash messages, and a rate limit of 20 auth attempts per 15 minutes.
+Working out of the box: sign up, log in, log out, a protected `/dashboard`, flash messages, and rate limits per IP address: 10 failed logins and 20 signups per 15 minutes. Successful logins don't count, so people sharing a network don't use up each other's attempts.
 
 The generated `package.json` pins Node to the major version you scaffolded with (`engines`), so hosts like Railway build with the Node you develop on instead of their own default, which can be an end-of-life version.
 
@@ -49,7 +49,7 @@ npm test
 - duplicate email is refused; wrong password and unknown email get the same message
 - a NoSQL-injection JSON body is rejected with plain messages
 - email is trimmed and lowercased; 404 page renders
-- the 21st auth attempt gets a 429 "Too many attempts" page
+- the 11th failed login gets a 429 "Too many attempts" page, even after a dozen successful logins; so does the 21st signup
 
 Run it after changing a template or bumping a major version in `DEPENDENCIES`. It takes about 15 seconds once npm's cache is warm. On a Raspberry Pi (Debian on ARM) it automatically uses MongoDB's Ubuntu 24.04 build, since there's no Debian ARM build.
 

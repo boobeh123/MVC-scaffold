@@ -16,7 +16,9 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 
 const CLI = path.join(__dirname, '..', 'bin', 'mvcScaffold.js');
 const APP_NAME = 'smoke-app';
-const AUTH_LIMIT = 20; // must match middleware/rateLimiters.js in the template
+// Must match middleware/rateLimiters.js in the template
+const LOGIN_LIMIT = 10; // failed logins
+const SIGNUP_LIMIT = 20;
 
 // MongoDB doesn't publish ARM builds for Debian; Raspberry Pi OS runs the Ubuntu 24.04 build fine
 const useUbuntuMongoOnDebianArm = () => {
@@ -45,7 +47,8 @@ describe('scaffolded app', () => {
   let baseUrl;
   let dbConnection; // a direct connection, to check what the app stores
   let cookie = ''; // a one-cookie jar is all the app needs (connect.sid)
-  let authAttempts = 0; // POSTs to /login and /signup count toward the rate limit
+  let failedLogins = 0; // login POSTs that don't end logged in count toward the login limit
+  let signupAttempts = 0; // every signup POST counts toward the signup limit
 
   // Fetch without following redirects, carrying the session cookie like a browser would
   const request = async (urlPath, { method = 'GET', form, json, useCookie = true } = {}) => {
@@ -60,12 +63,15 @@ describe('scaffolded app', () => {
       body = JSON.stringify(json);
     }
     if (useCookie && cookie) headers.Cookie = cookie;
-    if (method === 'POST' && ['/login', '/signup'].includes(urlPath)) authAttempts += 1;
 
     const response = await fetch(baseUrl + urlPath, { method, headers, body, redirect: 'manual' });
+    const location = response.headers.get('location');
+    if (method === 'POST' && urlPath === '/login' && location !== '/dashboard') failedLogins += 1;
+    if (method === 'POST' && urlPath === '/signup') signupAttempts += 1;
+
     const setCookie = response.headers.getSetCookie().find((value) => value.startsWith('connect.sid='));
     if (useCookie && setCookie) cookie = setCookie.split(';')[0];
-    return { status: response.status, location: response.headers.get('location'), setCookie, html: await response.text() };
+    return { status: response.status, location, setCookie, html: await response.text() };
   };
 
   // Flash messages rendered on a page, as "type: text"
@@ -235,18 +241,44 @@ describe('scaffolded app', () => {
     assert.match(html, /Page not found/);
   });
 
-  it(`rate limits auth after ${AUTH_LIMIT} attempts`, async () => {
+  it(`rate limits failed logins after ${LOGIN_LIMIT}, without counting successful ones`, async () => {
+    // More successful logins than the limit allows; if they counted, the block would come early
+    for (let login = 0; login < LOGIN_LIMIT + 2; login += 1) {
+      const { location } = await request('/login', {
+        method: 'POST',
+        form: { email: 'bobby@example.com', password: 'correcthorse' },
+      });
+      assert.equal(location, '/dashboard');
+      await request('/logout', { method: 'POST' });
+      await getFlashes('/'); // clear the "logged out" message
+    }
+
     let firstBlockedAttempt = null;
-    while (firstBlockedAttempt === null && authAttempts <= AUTH_LIMIT + 2) {
+    while (firstBlockedAttempt === null && failedLogins <= LOGIN_LIMIT + 2) {
       const { status, html } = await request('/login', {
         method: 'POST',
         form: { email: 'bobby@example.com', password: 'wrongwrong' },
       });
       if (status === 429) {
-        firstBlockedAttempt = authAttempts;
+        firstBlockedAttempt = failedLogins;
         assert.match(html, /Too many attempts/);
       }
     }
-    assert.equal(firstBlockedAttempt, AUTH_LIMIT + 1);
+    assert.equal(firstBlockedAttempt, LOGIN_LIMIT + 1);
+  });
+
+  it(`rate limits signups after ${SIGNUP_LIMIT} attempts`, async () => {
+    let firstBlockedAttempt = null;
+    while (firstBlockedAttempt === null && signupAttempts <= SIGNUP_LIMIT + 2) {
+      const { status, html } = await request('/signup', {
+        method: 'POST',
+        form: { email: 'nope', password: 'short', confirmPassword: 'short' },
+      });
+      if (status === 429) {
+        firstBlockedAttempt = signupAttempts;
+        assert.match(html, /Too many attempts/);
+      }
+    }
+    assert.equal(firstBlockedAttempt, SIGNUP_LIMIT + 1);
   });
 });
