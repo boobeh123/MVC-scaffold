@@ -30,3 +30,5 @@ public/         normalize.css, styles.css, main.js
 ## Deploying on Railway
 
 Set `NODE_ENV=production`, `DB_STRING`, and `SESSION_SECRET` in the service variables. Run `npm audit` before going live.
+
+`engines` in `package.json` pins the Node major version this app was created with, and Railway builds with it. Change it there when you move to a newer Node.

@@ -30,6 +30,8 @@ my-app/
 
 Working out of the box: sign up, log in, log out, a protected `/dashboard`, flash messages, and a rate limit of 20 auth attempts per 15 minutes.
 
+The generated `package.json` pins Node to the major version you scaffolded with (`engines`), so hosts like Railway build with the Node you develop on instead of their own default, which can be an end-of-life version.
+
 ## Testing
 
 ```bash
@@ -39,7 +41,7 @@ npm test
 
 `test/smokeTest.js` scaffolds a real app into a temp folder, installs it, starts it against a throwaway MongoDB 8.2 (`mongodb-memory-server`), and checks over HTTP:
 
-- the expected files exist, `.env` has a random 96-character secret and owner-only permissions
+- the expected files exist, `.env` has a random 96-character secret and owner-only permissions, `package.json` pins the Node version
 - anonymous visitors get no session cookie; security headers are set
 - `/dashboard` redirects guests to login with a message
 - invalid signup shows each validation message, and nothing that was typed is saved in the session store; a valid signup logs you straight in

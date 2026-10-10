@@ -124,6 +124,9 @@ describe('scaffolded app', () => {
     const env = fs.readFileSync(path.join(appDir, '.env'), 'utf8');
     assert.match(env, /^SESSION_SECRET=[0-9a-f]{96}$/m);
     assert.equal(fs.statSync(path.join(appDir, '.env')).mode & 0o777, 0o600);
+
+    const packageJson = JSON.parse(fs.readFileSync(path.join(appDir, 'package.json'), 'utf8'));
+    assert.equal(packageJson.engines.node, `${process.versions.node.split('.')[0]}.x`);
   });
 
   it('serves the home page without giving anonymous visitors a session', async () => {

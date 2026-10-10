@@ -100,6 +100,11 @@ const writePackageJson = (targetDir, appName) => {
       start: 'node server.js',
       dev: 'node --watch server.js',
     },
+    // Pin the Node major version the app was created with, so hosts like Railway build with
+    // the Node you develop on instead of their own default (which can be years old)
+    engines: {
+      node: `${process.versions.node.split('.')[0]}.x`,
+    },
   };
   fs.writeFileSync(path.join(targetDir, 'package.json'), `${JSON.stringify(packageJson, null, 2)}\n`);
 };
